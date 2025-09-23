@@ -31,7 +31,16 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+      }
+       /* Sidebar background */
+       section[data-testid="stSidebar"] {
+       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+      /* Sidebar text */
+      section[data-testid="stSidebar"] * {
+      color: white;
+      }
     
     .skill-card {
         background: white;
