@@ -163,8 +163,6 @@ st.markdown(
         margin: 0 auto;
         padding: 2rem;
     }
-</style>
-""", unsafe_allow_html=True)
 
     /* Cards */
     .stCard {
