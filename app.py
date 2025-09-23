@@ -3,15 +3,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 from datetime import datetime
-import base64
 import time
 
 # Initialize session state for sidebar visibility
 if 'sidebar_visible' not in st.session_state:
     st.session_state.sidebar_visible = True
 
-
-# Page config
+# Page config with explicit sidebar state
 st.set_page_config(
     page_title="Dnyaneshwar Bhosale - AI Engineer",
     page_icon="🚀",
@@ -19,33 +17,35 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for beautiful styling
+# Custom CSS and JavaScript
 st.markdown(
     """
     <style>
     /* Force sidebar to be visible */
     [data-testid="stSidebar"] {
-        display: block;
-        visibility: visible;
+        display: block !important;
+        visibility: visible !important;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
+        min-width: 250px;
+        z-index: 1000;
     }
 
     /* Sidebar text and elements */
     [data-testid="stSidebar"] * {
-        color: white;
+        color: white !important;
     }
 
     /* Sidebar radio button labels */
     [data-testid="stSidebar"] .stRadio label {
-        color: white;
+        color: white !important;
         font-weight: 500;
     }
 
     /* Highlight selected option */
     [data-testid="stSidebar"] .stRadio div[role='radiogroup'] > label[data-checked="true"] {
-        color: #ffcc00;
-        font-weight: bold;
+        color: #ffcc00 !important;
+        font-weight: bold !important;
     }
 
     /* Hide Streamlit default elements */
@@ -193,20 +193,31 @@ st.markdown(
     }
     </style>
     <script>
-        // Ensure sidebar remains visible
-        document.addEventListener("DOMContentLoaded", function() {
+        // Ensure sidebar remains visible with periodic checks
+        function ensureSidebarVisible() {
             const sidebar = document.querySelector('[data-testid="stSidebar"]');
             if (sidebar) {
                 sidebar.style.display = 'block';
                 sidebar.style.visibility = 'visible';
+                sidebar.style.minWidth = '250px';
+                sidebar.style.zIndex = '1000';
+            } else {
+                console.log('Sidebar not found, retrying...');
             }
-        });
+        }
+        // Run on page load
+        document.addEventListener("DOMContentLoaded", ensureSidebarVisible);
+        // Periodically check every 1 second
+        setInterval(ensureSidebarVisible, 1000);
         // Monitor WebSocket connection
         function checkWebSocket() {
             const ws = new WebSocket('wss://' + window.location.host + '/_stcore/stream');
             ws.onclose = function() {
                 console.log('WebSocket closed. Attempting to reconnect...');
-                setTimeout(checkWebSocket, 5000);
+                setTimeout(checkWebSocket, 3000);
+            };
+            ws.onerror = function(error) {
+                console.log('WebSocket error:', error);
             };
         }
         checkWebSocket();
@@ -215,20 +226,34 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Sidebar Navigation
+# Debug Sidebar State
+def debug_sidebar_state():
+    sidebar = st.session_state.sidebar_visible
+    st.sidebar.write(f"Sidebar State: {'Visible' if sidebar else 'Hidden'}")
+    # Log to browser console for debugging
+    st.markdown(
+        """
+        <script>
+            console.log('Sidebar state: %s');
+        </script>
+        """ % ('Visible' if sidebar else 'Hidden'),
+        unsafe_allow_html=True
+    )
+
+# Sidebar Navigation with Debug Button
 st.sidebar.markdown("# 🚀 Navigation")
 page = st.sidebar.radio("Choose Section", 
     ["🏠 Home", "👨‍💻 About", "⚡ Skills", "💼 Experience", "🚀 Projects", "🎓 Education", "📞 Contact"])
+st.sidebar.button("Debug Sidebar State", on_click=debug_sidebar_state)
 
-# Helper function for typing effect simulation
-def create_typing_effect(text, placeholder):
-    for i in range(len(text) + 1):
-        placeholder.markdown(f"<h2 style='color: #667eea; font-weight: bold;'>{text[:i]}|</h2>", unsafe_allow_html=True)
-        time.sleep(0.1)
+# Helper function for typing effect simulation (commented out to avoid rendering delays)
+# def create_typing_effect(text, placeholder):
+#     for i in range(len(text) + 1):
+#         placeholder.markdown(f"<h2 style='color: #667eea; font-weight: bold;'>{text[:i]}|</h2>", unsafe_allow_html=True)
+#         time.sleep(0.1)
 
 # Main Content
 if page == "🏠 Home":
-    # Hero Section
     st.markdown("""
     <div class="main-header fade-in">
         <h1>Hi, I'm Dnyaneshwar Bhosale 👋</h1>
@@ -240,7 +265,6 @@ if page == "🏠 Home":
     </div>
     """, unsafe_allow_html=True)
     
-    # Contact Info
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -275,7 +299,6 @@ if page == "🏠 Home":
         </div>
         """, unsafe_allow_html=True)
     
-    # Quick Stats
     st.markdown("---")
     st.markdown("### 📊 Quick Stats")
     
@@ -296,7 +319,6 @@ elif page == "👨‍💻 About":
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        # Animated profile placeholder
         st.markdown("""
         <div style="text-align: center; padding: 2rem;">
             <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
@@ -324,7 +346,6 @@ elif page == "👨‍💻 About":
         </ul>
         """, unsafe_allow_html=True)
 
-    # Core Competencies
     st.markdown("### 🎯 Core Competencies")
     
     col1, col2, col3 = st.columns(3)
@@ -356,7 +377,6 @@ elif page == "👨‍💻 About":
 elif page == "⚡ Skills":
     st.markdown('<p class="big-font">⚡ Technical Skills</p>', unsafe_allow_html=True)
     
-    # Skills data
     skills_data = {
         'Programming & Data': ['Python', 'SQL', 'Pandas', 'NumPy'],
         'ML & AI': ['Scikit-learn', 'TensorFlow', 'Keras', 'Machine Learning', 'Deep Learning', 'Generative AI', 'LLMs'],
@@ -365,7 +385,6 @@ elif page == "⚡ Skills":
         'Mathematics & Statistics': ['MSc Mathematics', 'Statistical Analysis', 'Mathematical Modeling']
     }
     
-    # Interactive skill levels
     skill_levels = {
         'Programming & Data': 90,
         'ML & AI': 85,
@@ -374,7 +393,6 @@ elif page == "⚡ Skills":
         'Mathematics & Statistics': 95
     }
     
-    # Create interactive skill visualization
     for category, skills in skills_data.items():
         with st.container():
             col1, col2 = st.columns([2, 1])
@@ -388,15 +406,12 @@ elif page == "⚡ Skills":
                 """, unsafe_allow_html=True)
             
             with col2:
-                # Progress bar
                 progress = skill_levels[category]
                 st.metric(f"Proficiency", f"{progress}%")
                 st.progress(progress / 100)
     
-    # Skills Chart
     st.markdown("### 📈 Skills Overview")
     
-    # Create radar chart using go.Scatterpolar
     fig = go.Figure()
     
     fig.add_trace(go.Scatterpolar(
@@ -424,7 +439,6 @@ elif page == "⚡ Skills":
 elif page == "💼 Experience":
     st.markdown('<p class="big-font">💼 Professional Experience</p>', unsafe_allow_html=True)
     
-    # Experience using native Streamlit components
     with st.container():
         col1, col2 = st.columns([1, 4])
         
@@ -439,11 +453,9 @@ elif page == "💼 Experience":
     
     st.markdown("---")
     
-    # Role Description
     st.markdown("#### 📋 Role Description")
     st.write("Designed and deployed **end-to-end AI-driven solutions** for real-world use cases.")
     
-    # Key Achievements
     st.markdown("#### 🏆 Key Achievements")
     
     achievements = [
@@ -456,7 +468,6 @@ elif page == "💼 Experience":
     for achievement in achievements:
         st.write(f"• {achievement}")
     
-    # Technologies Used
     st.markdown("#### 💡 Technologies Used")
     tech_used = ["Python", "TensorFlow", "Scikit-learn", "NLP", "LLMs", "RAG Systems", "Machine Learning"]
     
@@ -465,7 +476,6 @@ elif page == "💼 Experience":
         with cols[i]:
             st.button(tech, disabled=True, use_container_width=True, key=f"exp_tech_{i}")
     
-    # Experience Timeline
     st.markdown("---")
     st.markdown("### 📅 Career Timeline")
     
@@ -491,11 +501,9 @@ elif page == "💼 Experience":
     fig.update_layout(title_font_size=20, title_x=0.5)
     st.plotly_chart(fig, use_container_width=True)
 
-
 elif page == "🚀 Projects":
     st.markdown('<p class="big-font">🚀 Featured Projects</p>', unsafe_allow_html=True)
     
-    # Project 1 - AI-powered SQL Assistant
     with st.container():
         st.markdown("---")
         col1, col2, col3 = st.columns([3, 1, 1])
@@ -530,7 +538,6 @@ elif page == "🚀 Projects":
             with cols[i]:
                 st.button(tech, disabled=True, use_container_width=True, key=f"sql_tech_{i}")
     
-    # Project 2 - AgriTech Smart Farming Assistant
     with st.container():
         st.markdown("---")
         col1, col2, col3 = st.columns([3, 1, 1])
@@ -565,7 +572,6 @@ elif page == "🚀 Projects":
             with cols[i]:
                 st.button(tech, disabled=True, use_container_width=True, key=f"agri_tech_{i}")
     
-    # Project 3 - Spam Detection
     with st.container():
         st.markdown("---")
         col1, col2, col3 = st.columns([3, 1, 1])
@@ -600,7 +606,6 @@ elif page == "🚀 Projects":
             with cols[i]:
                 st.button(tech, disabled=True, use_container_width=True, key=f"spam_tech_{i}")
     
-    # Project 4 - Medical Chatbot
     with st.container():
         st.markdown("---")
         col1, col2, col3 = st.columns([3, 1, 1])
@@ -635,7 +640,6 @@ elif page == "🚀 Projects":
             with cols[i]:
                 st.button(tech, disabled=True, use_container_width=True, key=f"medical_tech_{i}")
     
-    # Project 5 - License Plate Detection
     with st.container():
         st.markdown("---")
         col1, col2, col3 = st.columns([3, 1, 1])
@@ -670,7 +674,6 @@ elif page == "🚀 Projects":
             with cols[i]:
                 st.button(tech, disabled=True, use_container_width=True, key=f"plate_tech_{i}")
     
-    # Project 6 - Housing Project
     with st.container():
         st.markdown("---")
         col1, col2, col3 = st.columns([3, 1, 1])
@@ -705,7 +708,6 @@ elif page == "🚀 Projects":
             with cols[i]:
                 st.button(tech, disabled=True, use_container_width=True, key=f"housing_tech_{i}")
     
-    # Project 7 - Flight Price Prediction
     with st.container():
         st.markdown("---")
         col1, col2, col3 = st.columns([3, 1, 1])
@@ -740,7 +742,6 @@ elif page == "🚀 Projects":
             with cols[i]:
                 st.button(tech, disabled=True, use_container_width=True, key=f"flight_tech_{i}")
     
-    # Project Impact Chart
     st.markdown("---")
     st.markdown("### 📊 Project Portfolio Overview")
     
@@ -766,7 +767,6 @@ elif page == "🚀 Projects":
 elif page == "🎓 Education":
     st.markdown('<p class="big-font">🎓 Educational Background</p>', unsafe_allow_html=True)
     
-    # Education Cards
     col1, col2 = st.columns(2)
     
     with col1:
@@ -791,7 +791,6 @@ elif page == "🎓 Education":
         </div>
         """, unsafe_allow_html=True)
     
-    # Certifications
     st.markdown("### 🏆 Certifications & Achievements")
     
     st.markdown("""
@@ -809,7 +808,6 @@ elif page == "🎓 Education":
     </div>
     """, unsafe_allow_html=True)
     
-    # Academic Progress Chart
     st.markdown("### 📈 Academic Journey")
     
     academic_data = {
@@ -859,7 +857,6 @@ elif page == "📞 Contact":
     with col2:
         st.markdown("### 📝 Send a Message")
         
-        # Contact Form
         with st.form("contact_form"):
             name = st.text_input("Your Name")
             email = st.text_input("Your Email")
@@ -871,7 +868,6 @@ elif page == "📞 Contact":
                 st.success("Thanks for reaching out! I'll get back to you soon. 😊")
                 st.balloons()
         
-        # Quick Contact Buttons
         st.markdown("### ⚡ Quick Contact")
         
         col1, col2 = st.columns(2)
