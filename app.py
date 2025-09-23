@@ -169,7 +169,7 @@ st.markdown("""
 
 # Sidebar Navigation
 st.sidebar.markdown("# 🚀 Navigation")
-page = st.sidebar.selectbox("Choose Section", 
+page = st.sidebar.radio("Choose Section", 
     ["🏠 Home", "👨‍💻 About", "⚡ Skills", "💼 Experience", "🚀 Projects", "🎓 Education", "📞 Contact"])
 
 # Helper function for typing effect simulation
