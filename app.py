@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 # Custom CSS for beautiful styling
-st.markdown(
+st.markd own(
     """
     <style>
     /* Sidebar */
