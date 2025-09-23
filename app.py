@@ -6,6 +6,11 @@ from datetime import datetime
 import base64
 import time
 
+# Initialize session state for sidebar visibility
+if 'sidebar_visible' not in st.session_state:
+    st.session_state.sidebar_visible = True
+
+
 # Page config
 st.set_page_config(
     page_title="Dnyaneshwar Bhosale - AI Engineer",
