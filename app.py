@@ -25,36 +25,29 @@ st.markdown(
     <style>
     /* Force sidebar to be visible */
     [data-testid="stSidebar"] {
-        display: block !important;
-        visibility: visible !important;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        display: block;
+        visibility: visible;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
     }
 
-    /* Sidebar text color */
+    /* Sidebar text and elements */
     [data-testid="stSidebar"] * {
-        color: white !important;
+        color: white;
     }
 
     /* Sidebar radio button labels */
     [data-testid="stSidebar"] .stRadio label {
-        color: white !important;
+        color: white;
         font-weight: 500;
     }
 
     /* Highlight selected option */
     [data-testid="stSidebar"] .stRadio div[role='radiogroup'] > label[data-checked="true"] {
-        color: #ffcc00 !important;
-        font-weight: bold !important;
+        color: #ffcc00;
+        font-weight: bold;
     }
-    </style>
-    <style>
-    /* Sidebar */
-    section[data-testid="stSidebar"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    section[data-testid="stSidebar"] * {
-        color: white !important;
-    }
+
     /* Hide Streamlit default elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -62,7 +55,7 @@ st.markdown(
     
     /* Custom styling */
     .main-header {
-        background: linear-grad ient(90deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         padding: 2rem;
         border-radius: 10px;
         color: white;
@@ -147,18 +140,9 @@ st.markdown(
         100% { background-position: 0% 50%; }
     }
     
-    /* Custom sidebar */
-    .css-1d391kg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    
-    .css-1d391kg .css-1v0mbdj {
-        color: white;
-    }
-    
     /* Typography */
     .big-font {
-        font-size: 3rem !important;
+        font-size: 3rem;
         font-weight: bold;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
@@ -167,7 +151,7 @@ st.markdown(
     }
     
     .medium-font {
-        font-size: 1.5rem !important;
+        font-size: 1.5rem;
         color: #4a5568;
         text-align: center;
     }
@@ -208,6 +192,25 @@ st.markdown(
         color: #333;
     }
     </style>
+    <script>
+        // Ensure sidebar remains visible
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.querySelector('[data-testid="stSidebar"]');
+            if (sidebar) {
+                sidebar.style.display = 'block';
+                sidebar.style.visibility = 'visible';
+            }
+        });
+        // Monitor WebSocket connection
+        function checkWebSocket() {
+            const ws = new WebSocket('wss://' + window.location.host + '/_stcore/stream');
+            ws.onclose = function() {
+                console.log('WebSocket closed. Attempting to reconnect...');
+                setTimeout(checkWebSocket, 5000);
+            };
+        }
+        checkWebSocket();
+    </script>
     """,
     unsafe_allow_html=True
 )
