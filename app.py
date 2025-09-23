@@ -18,6 +18,31 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    /* Force sidebar to be visible */
+    [data-testid="stSidebar"] {
+        display: block !important;
+        visibility: visible !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+
+    /* Sidebar text color */
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+
+    /* Sidebar radio button labels */
+    [data-testid="stSidebar"] .stRadio label {
+        color: white !important;
+        font-weight: 500;
+    }
+
+    /* Highlight selected option */
+    [data-testid="stSidebar"] .stRadio div[role='radiogroup'] > label[data-checked="true"] {
+        color: #ffcc00 !important;
+        font-weight: bold !important;
+    }
+    </style>
+    <style>
     /* Sidebar */
     section[data-testid="stSidebar"] {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
